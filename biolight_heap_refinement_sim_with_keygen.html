@@ -1,0 +1,111 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>BioLight – Heap Refinement Simulation</title>
+  <style>
+    body { font-family: sans-serif; background: #101010; color: #eee; text-align: center; padding: 2em; }
+    .bar { display: inline-block; width: 2px; margin: 0 0.5px; background: lime; vertical-align: bottom; }
+    #graph { height: 200px; width: 100%; border: 1px solid #444; margin: 1em auto; overflow-x: auto; white-space: nowrap; }
+    #info { margin-top: 1em; font-size: 1.1em; color: #ccc; }
+    button { background: #222; color: #eee; border: 1px solid #444; padding: 0.5em 1em; cursor: pointer; }
+    button:hover { background: #444; }
+    .note { font-size: 0.95em; color: #aaa; margin-top: 1em; max-width: 640px; margin-left: auto; margin-right: auto; }
+  </style>
+</head>
+<body>
+  <h1>BioLight – Elite Heap Refinement (Simulation)</h1>
+  <p>Each new entropy block is evaluated. If it is better than the worst in the heap, it replaces it.</p>
+  <button onclick="startHeapRefinement()">Start Simulation</button>
+  <div id="graph"></div>
+  <div id="info">Average entropy: <span id="entropy">–</span> bits/byte</div>
+  <div class="note">
+    <p>This demo is a visual and interactive simulation of how the <b>BioLight heap</b> refines itself over time.</p>
+    <p>It does <b>not use the actual BioLight entropy engine or real-world inputs</b>, but it mirrors its behavior: each cycle evaluates a new entropy block and replaces the worst block if improvement is possible.</p>
+    <p>The heap thus becomes increasingly selective and purified, naturally converging to high-entropy states (≈ 8/8 bits).</p>
+  
+  <div style="margin-top: 2em;">
+    <h3>Derive Key from Refined Heap</h3>
+    <button onclick="deriveKey()">Derive Key</button>
+    <p id="keyresult" style="font-family: monospace; font-size: 0.9em; word-break: break-all; color: #ccc;">–</p>
+    <button onclick="copyKey()">Copy</button>
+  </div>
+
+  <script>
+    async function deriveKey() {
+      const byteArray = new Uint8Array(heapSize * 4);
+      for (let i = 0; i < heap.length; i++) {
+        const val = Math.floor((heap[i] / 8.0) * 255);
+        byteArray[i * 4 + 0] = val;
+        byteArray[i * 4 + 1] = (val ^ 0xa5) & 0xff;
+        byteArray[i * 4 + 2] = (val + i) & 0xff;
+        byteArray[i * 4 + 3] = (val * 31) & 0xff;
+      }
+      const digest = await crypto.subtle.digest("SHA-256", byteArray);
+      const hashArray = Array.from(new Uint8Array(digest));
+      const hex = hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
+      document.getElementById("keyresult").textContent = hex;
+    }
+
+    function copyKey() {
+      const text = document.getElementById("keyresult").textContent;
+      if (text && text !== "–") {
+        navigator.clipboard.writeText(text).then(() => {
+          alert("Key copied to clipboard.");
+        }, () => {
+          alert("Failed to copy key.");
+        });
+      }
+    }
+
+    let graph = document.getElementById("graph");
+    let entropyDisplay = document.getElementById("entropy");
+    let heap = [];
+    const heapSize = 100;
+
+    function simulateBlockEntropy(cycle) {
+      let base = Math.min(7.0 + 0.6 * Math.log10(1 + cycle), 8.0);
+      let noise = (Math.random() - 0.5) * 0.06;
+      return Math.min(8.0, Math.max(6.5, base + noise));
+    }
+
+    function updateGraph() {
+      graph.innerHTML = "";
+      heap.forEach(value => {
+        let bar = document.createElement("div");
+        bar.className = "bar";
+        bar.style.height = (value / 8.0 * 100) + "%";
+        bar.title = value.toFixed(5) + " bits";
+        graph.appendChild(bar);
+      });
+    }
+
+    function updateEntropyDisplay() {
+      let avg = heap.reduce((a, b) => a + b, 0) / heap.length;
+      entropyDisplay.textContent = avg.toFixed(5);
+    }
+
+    function startHeapRefinement() {
+      graph.innerHTML = "";
+      heap = Array.from({ length: heapSize }, () => 6.5 + Math.random() * 0.5);
+      updateGraph();
+      updateEntropyDisplay();
+      let cycle = 1;
+
+      setInterval(() => {
+        const newBlock = simulateBlockEntropy(cycle++);
+        let minIndex = 0;
+        for (let i = 1; i < heap.length; i++) {
+          if (heap[i] < heap[minIndex]) minIndex = i;
+        }
+        if (newBlock > heap[minIndex]) {
+          heap[minIndex] = newBlock;
+          updateGraph();
+          updateEntropyDisplay();
+        }
+      }, 80);
+    }
+  </script>
+</body>
+</html>
