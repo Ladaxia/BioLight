@@ -1,0 +1,54 @@
+Ladaxia Public License v1.0
+=================================
+
+Copyright © 2025 Mascheroni Andrea
+All rights reserved.
+
+This license applies specifically to BioLight Project(Entropy-Based Elite Battery System) and all related code, algorithms, documentation, SDKs, demos, audit tools, and structures
+that are officially released as part of the Ladaxia Ecosystem.
+
+BioLight is a passive, renewable, and fully audit-ready entropy engine that collects live raw noise
+from physical and digital sources (e.g. screen state, RAM, audio signals, etc.).
+Where real inputs are unavailable or intentionally blocked, the system falls back to clearly marked simulated input.
+This ensures stable entropy without compromising auditability.
+
+Only the most statistically elite entropy samples are retained through a constant, passive and strict selection, that ensures entropy level to keep growing towards ideal levels of entropy over time.
+Whitening, compression, or hash transformation are not required prior to use.
+
+------------------------------
+You are free to:
+------------------------------
+- Use the code and documents for personal, educational, or research purposes.
+- Share unmodified or modified versions, provided full attribution is given.
+- Study and build upon the ideas for non-commercial exploration.
+
+------------------------------
+You are NOT allowed to:
+------------------------------
+- Use, sell, or incorporate this system or its components into commercial products or services without written consent from the author.
+- Repackage or relicense this code or system as your own.
+- Remove or alter the author’s name, credits, or licensing terms.
+- Use any part of the system in services that hide its use from users (e.g. server-side obfuscation, shadow deployment).
+
+------------------------------
+Open & Irrevocable Nature
+------------------------------
+This project is and shall remain irrevocably open and public.
+Any fork, adaptation, or derivative work must preserve:
+- This license
+- The original author's attribution
+- The open and verifiable nature of the system
+
+------------------------------
+Commercial Licensing
+------------------------------
+Commercial usage, enterprise integration, and closed-system deployment require a license agreement.
+Contact the author for access, terms, or licensing models.
+
+------------------------------
+Disclaimer
+------------------------------
+This system is provided “as-is” without warranty of any kind.
+The author shall not be held liable for any damages arising from its use or misuse.
+
+For licensing or commercial inquiries, contact: ladaxia@proton.me
